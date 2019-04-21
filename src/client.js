@@ -1,4 +1,5 @@
-const discord = require('discord.js');
+const moment = require('moment');
+const discord = require('awesome-djs');
 const CommandoRegistry = require('./registry');
 const CommandDispatcher = require('./dispatcher');
 const GuildSettingsHelper = require('./providers/helper');
@@ -16,6 +17,7 @@ class CommandoClient extends discord.Client {
 	 * @property {boolean} [nonCommandEditable=true] - Whether messages without commands can be edited to a command
 	 * @property {string|string[]|Set<string>} [owner] - ID of the bot owner's Discord user, or multiple IDs
 	 * @property {string} [invite] - Invite URL to the bot's support server
+	 * @property {boolean} [typescript=false] - Whether the bot is running on a typescript codebase
 	 */
 
 	/**
@@ -26,6 +28,7 @@ class CommandoClient extends discord.Client {
 		if(options.commandPrefix === null) options.commandPrefix = '';
 		if(typeof options.commandEditableDuration === 'undefined') options.commandEditableDuration = 30;
 		if(typeof options.nonCommandEditable === 'undefined') options.nonCommandEditable = true;
+		if(typeof options.typescript === 'undefined') options.typescript = false;
 		super(options);
 
 		/**
@@ -142,16 +145,18 @@ class CommandoClient extends discord.Client {
 		this.provider = provider;
 
 		if(this.readyTimestamp) {
-			this.emit('debug', `Provider set to ${provider.constructor.name} - initialising...`);
+			// eslint-disable-next-line max-len
+			this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider set to ${provider.constructor.name} - initialising...`);
 			await provider.init(this);
-			this.emit('debug', 'Provider finished initialisation.');
+			this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider finished initialisation.`);
 			return undefined;
 		}
 
-		this.emit('debug', `Provider set to ${provider.constructor.name} - will initialise once ready.`);
+		// eslint-disable-next-line max-len
+		this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider set to ${provider.constructor.name} - will initialise once ready.`);
 		await new Promise(resolve => {
 			this.once('ready', () => {
-				this.emit('debug', `Initialising provider...`);
+				this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Initialising provider...`);
 				resolve(provider.init(this));
 			});
 		});
@@ -162,7 +167,7 @@ class CommandoClient extends discord.Client {
 		 * @param {SettingProvider} provider - Provider that was initialised
 		 */
 		this.emit('providerReady', provider);
-		this.emit('debug', 'Provider finished initialisation.');
+		this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider finished initialisation.`);
 		return undefined;
 	}
 

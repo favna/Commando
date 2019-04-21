@@ -1,4 +1,4 @@
-const { Structures, escapeMarkdown, splitMessage, resolveString } = require('discord.js');
+const { Structures, escapeMarkdown, splitMessage, resolveString } = require('awesome-djs');
 const { oneLine } = require('common-tags');
 const Command = require('../commands/base');
 const FriendlyError = require('../errors/friendly');
@@ -151,7 +151,7 @@ module.exports = Structures.extend('Message', Message => {
 			}
 
 			// Ensure the channel is a NSFW one if required
-			if(this.command.nsfw && !this.channel.nsfw) {
+			if(this.channel.type !== 'dm' && this.command.nsfw && !this.channel.nsfw) {
 				this.client.emit('commandBlock', this, 'nsfw');
 				return this.command.onBlock(this, 'nsfw');
 			}

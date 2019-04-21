@@ -1,7 +1,7 @@
 /// <reference path='index.d.ts' />
 
-import { Message } from 'discord.js';
-import { Command, CommandoMessage, CommandoClient } from 'discord.js-commando';
+import { Message } from 'awesome-djs';
+import { Command, CommandoMessage, CommandoClient } from 'awesome-commando';
 
 const client = new CommandoClient();
 
@@ -25,7 +25,7 @@ class TestCommand extends Command {
 		return true;
 	}
 
-	public async run(message: CommandoMessage, args: {} | string | string[]): Promise<Message | Message[]> {
+	public async run(message: CommandoMessage, args: {} | string | string[]): Promise<Message | Message[] | null> {
 		return message.say('test');
 	}
 }

@@ -8,8 +8,8 @@ declare module 'SyncSqlite' {
 	export interface Statement {}
 }
 
-declare module 'discord.js-commando' {
-	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, VoiceState, Webhook } from 'discord.js';
+declare module 'awesome-commando' {
+	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, VoiceState, Webhook, ClientUser } from 'awesome-djs';
 	import { Database as SQLiteDatabase, Statement as SQLiteStatement } from 'sqlite';
 	import { Database as SyncSQLiteDatabase, Statement as SyncSQLiteStatement } from 'SyncSqlite';
 
@@ -34,7 +34,7 @@ declare module 'discord.js-commando' {
 		public validator: Function;
 		public wait: number;
 
-		public obtain(msg: CommandoMessage, val?: string, promptLimit?: number): Promise<ArgumentResult>;
+		public obtain<T extends {} = any>(msg: CommandoMessage, val?: string, promptLimit?: number): Promise<ArgumentResult<T>>;
 		public parse(val: string, msg: CommandoMessage): any | Promise<any>;
 		public validate(val: string, msg: CommandoMessage): boolean | string | Promise<boolean | string>;
 	}
@@ -46,7 +46,7 @@ declare module 'discord.js-commando' {
 		public readonly client: CommandoClient;
 		public promptLimit: number;
 
-		public obtain(msg: CommandoMessage, provided?: any[], promptLimit?: number): Promise<ArgumentCollectorResult>;
+		public obtain<T extends {} = any>(msg: CommandoMessage, provided?: any[], promptLimit?: number): Promise<ArgumentCollectorResult<T>>;
 	}
 
 	export class ArgumentType {
@@ -93,29 +93,30 @@ declare module 'discord.js-commando' {
 		public memberName: string;
 		public name: string;
 		public nsfw: boolean;
+		public explicit: boolean;
 		public ownerOnly: boolean;
 		public patterns: RegExp[];
 		public throttling: ThrottlingOptions;
 		public unknown: boolean;
 		public userPermissions: PermissionResolvable[];
 
-		public hasPermission(message: CommandoMessage): boolean | string;
+		public hasPermission(message: CommandoMessage, ownerOverride?: boolean): boolean | string;
 		public isEnabledIn(guild: GuildResolvable, bypassGroup?: boolean): boolean;
 		public isUsable(message: Message): boolean;
 		public onBlock(message: CommandoMessage, reason: string, data?: Object): Promise<Message | Message[]>;
-		public onBlock(message: CommandoMessage, reason: 'guildOnly' | 'nsfw'): Promise<Message | Message[]>;
+		public onBlock(message: CommandoMessage, reason: 'guildOnly' | 'nsfw' | 'explicit'): Promise<Message | Message[]>;
 		public onBlock(message: CommandoMessage, reason: 'permission', data: { response?: string }): Promise<Message | Message[]>;
-		public onBlock(message: CommandoMessage, reason: 'clientPermissions', data: { missing: string }): Promise<Message | Message[]>;
+		public onBlock(message: CommandoMessage, reason: 'clientPermissions', data: { missing: PermissionString[] }): Promise<Message | Message[]>;
 		public onBlock(message: CommandoMessage, reason: 'throttling', data: { throttle: Object, remaining: number }): Promise<Message | Message[]>;
-		public onError(err: Error, message: CommandoMessage, args: object | string | string[], fromPattern: false): Promise<Message | Message[]>;
-		public onError(err: Error, message: CommandoMessage, args: string[], fromPattern: true): Promise<Message | Message[]>;
+		public onError(err: Error, message: CommandoMessage, args: object | string | string[], fromPattern: false, result?: ArgumentCollectorResult): Promise<Message | Message[]>;
+		public onError(err: Error, message: CommandoMessage, args: string[], fromPattern: true, result?: ArgumentCollectorResult): Promise<Message | Message[]>;
 		public reload(): void;
-		public run(message: CommandoMessage, args: object | string | string[], fromPattern: boolean): Promise<Message | Message[] | null> | null;
+		public run(message: CommandoMessage, args: object | string | string[], fromPattern: boolean, result?: ArgumentCollectorResult): Promise<Message | Message[] | null> | null;
 		public setEnabledIn(guild: GuildResolvable, enabled: boolean): void;
 		public unload(): void;
-		public usage(argString?: string, prefix?: string, user?: User): string;
+		public usage(argString?: string, prefix?: string, user?: User | ClientUser): string;
 
-		public static usage(command: string, prefix?: string, user?: User): string;
+		public static usage(command: string, prefix?: string, user?: User | ClientUser): string;
 	}
 
 	export class CommandDispatcher {
@@ -159,7 +160,7 @@ declare module 'discord.js-commando' {
 		public setEnabledIn(guild: GuildResolvable, enabled: boolean): void;
 	}
 
-	export class CommandoMessage {
+	export class CommandoMessage extends Message {
 		public constructor(message: Message, command?: Command, argString?: string, patternMatches?: string[]);
 
 		private deleteRemainingResponses(): void;
@@ -169,58 +170,26 @@ declare module 'discord.js-commando' {
 		private respond(options?: {}): Message | Message[];
 
 		public argString: string;
-		public readonly attachments: Collection<string, MessageAttachment>;
-		public readonly author: User;
-		public readonly channel: TextChannel | DMChannel;
-		public readonly cleanContent: string;
 		public readonly client: CommandoClient;
 		public command: Command;
-		public readonly content: string;
-		public readonly createdAt: Date;
-		public readonly createdTimestamp: number;
-		public readonly deletable: boolean;
-		public readonly editable: boolean;
-		public readonly editedAt: Date;
-		public readonly editedTimestamp: number;
-		public readonly edits: Message[];
-		public readonly embeds: MessageEmbed[];
 		public readonly guild: CommandoGuild;
-		public readonly id: string;
-		public readonly member: GuildMember;
-		public readonly mentions: MessageMentions;
-		public message: Message;
-		public readonly nonce: string;
 		public patternMatches: string[];
-		public readonly pinnable: boolean;
-		public readonly pinned: boolean;
-		public readonly reactions: Collection<string, MessageReaction>;
 		public responsePositions: {};
 		public responses: {};
-		public readonly system: boolean;
-		public readonly tts: boolean;
-		public readonly webhookID: string;
 
-		public anyUsage(command?: string, prefix?: string, user?: User): string;
-		public clearReactions(): Promise<Message>;
+		public anyUsage(command?: string, prefix?: string, user?: User | ClientUser): string;
 		public code(lang: string, content: StringResolvable, options?: MessageOptions): Promise<Message | Message[]>
-		public delete(timeout?: number): Promise<Message>;
 		public direct(content: StringResolvable, options?: MessageOptions): Promise<Message | Message[]>;
-		public edit(content: StringResolvable): Promise<Message>
 		public editCode(lang: string, content: StringResolvable): Promise<Message>;
 		public embed(embed: MessageEmbed | {}, content?: StringResolvable, options?: MessageOptions): Promise<Message | Message[]>;
-		public fetchWebhook(): Promise<Webhook>;
 		public isMemberMentioned(member: GuildMember | User): boolean;
 		public isMentioned(data: GuildChannel | User | Role | string): boolean;
 		public parseArgs(): string | string[];
 		public static parseArgs(argString: string, argCount?: number, allowSingleQuote?: boolean): string[];
-		public pin(): Promise<Message>
-		public react(emoji: string | Emoji | ReactionEmoji): Promise<MessageReaction>;
-		public reply(content: StringResolvable, options?: MessageOptions): Promise<Message | Message[]>;
 		public replyEmbed(embed: MessageEmbed | {}, content?: StringResolvable, options?: MessageOptions): Promise<Message | Message[]>;
 		public run(): Promise<Message | Message[]>;
 		public say(content: StringResolvable, options?: MessageOptions): Promise<Message | Message[]>;
-		public unpin(): Promise<Message>;
-		public usage(argString?: string, prefix?: string, user?: User): string;
+		public usage(argString?: string, prefix?: string, user?: User | ClientUser): string;
 	}
 
 	export class CommandoClient extends Client {
@@ -258,47 +227,14 @@ declare module 'discord.js-commando' {
 		on(event: 'groupStatusChange', listener: (guild: CommandoGuild, group: CommandGroup, enabled: boolean) => void): this;
 		on(event: 'typeRegister', listener: (type: ArgumentType, registry: CommandoRegistry) => void): this;
 		on(event: 'unknownCommand', listener: (message: CommandoMessage) => void): this;
-		on(event: 'channelCreate', listener: (channel: Channel) => void): this;
-		on(event: 'channelDelete', listener: (channel: Channel) => void): this;
-		on(event: 'channelPinsUpdate', listener: (channel: Channel, time: Date) => void): this;
-		on(event: 'channelUpdate', listener: (oldChannel: Channel, newChannel: Channel) => void): this;
 		on(event: 'debug', listener: (info: string) => void): this;
 		on(event: 'disconnect', listener: (event: any) => void): this;
-		on(event: 'emojiCreate', listener: (emoji: Emoji) => void): this;
-		on(event: 'emojiDelete', listener: (emoji: Emoji) => void): this;
-		on(event: 'emojiUpdate', listener: (oldEmoji: Emoji, newEmoji: Emoji) => void): this;
-		on(event: 'error', listener: (error: Error) => void): this;
-		on(event: 'guildBanAdd', listener: (guild: CommandoGuild, user: User) => void): this;
-		on(event: 'guildBanRemove', listener: (guild: CommandoGuild, user: User) => void): this;
-		on(event: 'guildCreate', listener: (guild: CommandoGuild) => void): this;
-		on(event: 'guildDelete', listener: (guild: CommandoGuild) => void): this;
-		on(event: 'guildMemberAdd', listener: (member: GuildMember) => void): this;
-		on(event: 'guildMemberAvailable', listener: (member: GuildMember) => void): this;
-		on(event: 'guildMemberRemove', listener: (member: GuildMember) => void): this;
-		on(event: 'guildMembersChunk', listener: (members: Collection<Snowflake, GuildMember>, guild: CommandoGuild) => void): this;
-		on(event: 'guildMemberSpeaking', listener: (member: GuildMember, speaking: boolean) => void): this;
-		on(event: 'guildMemberUpdate', listener: (oldMember: GuildMember, newMember: GuildMember) => void): this;
-		on(event: 'guildUnavailable', listener: (guild: CommandoGuild) => void): this;
+		on(event: 'guildBanAdd' | 'guildBanRemove', listener: (guild: CommandoGuild, user: User) => void): this;
+		on(event: 'guildCreate' | 'guildDelete' | 'guildUnavailable', listener: (guild: CommandoGuild) => void): this;
 		on(event: 'guildUpdate', listener: (oldGuild: CommandoGuild, newGuild: CommandoGuild) => void): this;
-		on(event: 'message', listener: (message: Message) => void): this;
-		on(event: 'messageDelete', listener: (message: Message) => void): this;
-		on(event: 'messageDeleteBulk', listener: (messages: Collection<Snowflake, Message>) => void): this;
-		on(event: 'messageReactionAdd', listener: (messageReaction: MessageReaction, user: User) => void): this;
-		on(event: 'messageReactionRemove', listener: (messageReaction: MessageReaction, user: User) => void): this;
-		on(event: 'messageReactionRemoveAll', listener: (message: Message) => void): this;
-		on(event: 'messageUpdate', listener: (oldMessage: Message, newMessage: Message) => void): this;
-		on(event: 'presenceUpdate', listener: (oldMember: GuildMember, newMember: GuildMember) => void): this;
 		on(event: 'providerReady', listener: (provider: SettingProvider) => void): this;
-		on(event: 'ready', listener: () => void): this;
 		on(event: 'reconnecting', listener: () => void): this;
-		on(event: 'roleCreate', listener: (role: Role) => void): this;
-		on(event: 'roleDelete', listener: (role: Role) => void): this;
-		on(event: 'roleUpdate', listener: (oldRole: Role, newRole: Role) => void): this;
-		on(event: 'typingStart', listener: (channel: Channel, user: User) => void): this;
-		on(event: 'typingStop', listener: (channel: Channel, user: User) => void): this;
 		on(event: 'userNoteUpdate', listener: (user: UserResolvable, oldNote: string, newNote: string) => void): this;
-		on(event: 'userUpdate', listener: (oldUser: User, newUser: User) => void): this;
-		on(event: 'voiceStateUpdate', listener: (oldState: VoiceState | undefined, newState: VoiceState) => void): this;
 		on(event: 'warn', listener: (info: string) => void): this;
 	}
 
@@ -313,7 +249,7 @@ declare module 'discord.js-commando' {
 		public commandPrefix: string;
 		public readonly settings: GuildSettingsHelper;
 
-		public commandUsage(command?: string, user?: User): string;
+		public commandUsage(command?: string, user?: User | ClientUser): string;
 		public isCommandEndabled(command: CommandResolvable): boolean;
 		public isGroupEnabled(group: CommandGroupResolvable): boolean;
 		public setCommandEnabled(command: CommandResolvable, enabled: boolean): void;
@@ -385,10 +321,10 @@ declare module 'discord.js-commando' {
 
 		public readonly client: CommandoClient;
 		public db: SQLiteDatabase;
-		private deleteStmt: SQLiteStatement;
-		private insertOrReplaceStmt: SQLiteStatement;
-		private listeners: Map<any, any>;
-		private settings: Map<any, any>;
+		protected deleteStmt: SQLiteStatement;
+		protected insertOrReplaceStmt: SQLiteStatement;
+		protected listeners: Map<any, any>;
+		protected settings: Map<any, any>;
 
 		public clear(guild: Guild | string): Promise<void>;
 		public destroy(): Promise<void>;
@@ -402,26 +338,12 @@ declare module 'discord.js-commando' {
 		private updateOtherShards(key: string, val: any): void;
 	}
 
-	export class SyncSQLiteProvider extends SettingProvider {
+	export class SyncSQLiteProvider extends SQLiteProvider {
 		public constructor(db: SyncSQLiteDatabase);
 
-		public readonly client: CommandoClient;
 		public db: SyncSQLiteDatabase;
-		private deleteStmt: SyncSQLiteStatement;
-		private insertOrReplaceStmt: SyncSQLiteStatement
-		private listeners: Map<any, any>;
-		private settings: Map<any, any>;
-
-		public clear(guild: Guild | string): Promise<void>;
-		public destroy(): Promise<void>;
-		public get(guild: Guild | string, key: string, defVal?: any): any;
-		public init(client: CommandoClient): Promise<void>;
-		public remove(guild: Guild | string, key: string): Promise<any>;
-		public set(guild: Guild | string, key: string, val: any): Promise<any>;
-		private setupGuild(guild: string, settings: {}): void;
-		private setupGuildCommand(guild: CommandoGuild, command: Command, settings: {}): void;
-		private setupGuildGroup(guild: CommandoGuild, group: CommandGroup, settings: {}): void;
-		private updateOtherShards(key: string, val: any): void;
+		protected deleteStmt: SyncSQLiteStatement;
+		protected insertOrReplaceStmt: SyncSQLiteStatement
 	}
 
 	export class util {
@@ -437,14 +359,14 @@ declare module 'discord.js-commando' {
 
 	export const version: string;
 
-	type ArgumentCollectorResult<T = object> = {
-		values: T | null;
+	export type ArgumentCollectorResult<T extends {} = any> = {
+		values: T;
 		cancelled?: 'user' | 'time' | 'promptLimit';
 		prompts: Message[];
 		answers: Message[];
 	};
 
-	type ArgumentInfo = {
+	export type ArgumentInfo = {
 		key: string;
 		label?: string;
 		prompt: string;
@@ -461,16 +383,16 @@ declare module 'discord.js-commando' {
 		wait?: number;
 	};
 
-	type ArgumentResult = {
-		value: any | any[];
+	export type ArgumentResult<T extends {} = any> = {
+		value: T | T[];
 		cancelled?: 'user' | 'time' | 'promptLimit';
 		prompts: Message[];
 		answers: Message[];
 	};
 
-	type CommandGroupResolvable = CommandGroup | string;
+	export type CommandGroupResolvable = CommandGroup | string;
 
-	type CommandInfo = {
+	export type CommandInfo = {
 		name: string;
 		aliases?: string[];
 		autoAliases?: boolean;
@@ -481,6 +403,7 @@ declare module 'discord.js-commando' {
 		details?: string;
 		examples?: string[];
 		nsfw?: boolean;
+		explicit?: boolean;
 		guildOnly?: boolean;
 		ownerOnly?: boolean;
 		clientPermissions?: PermissionResolvable[];
@@ -498,23 +421,24 @@ declare module 'discord.js-commando' {
 		unknown?: boolean;
 	};
 
-	type CommandoClientOptions = ClientOptions & {
+	export interface CommandoClientOptions extends ClientOptions {
 		commandPrefix?: string;
 		commandEditableDuration?: number;
 		nonCommandEditable?: boolean;
 		owner?: string | string[] | Set<string>;
 		invite?: string;
-	};
+		typescript?: boolean;
+	}
 
-	type CommandResolvable = Command | string;
+	export type CommandResolvable = Command | string;
 
-	type Inhibitor = (msg: CommandoMessage) => false | string | Inhibition;
-	type Inhibition = {
+	export type Inhibitor = (msg: CommandoMessage) => false | string | Inhibition;
+	export type Inhibition = {
 		reason: string;
 		response?: Promise<Message>;
 	}
 
-	type ThrottlingOptions = {
+	export type ThrottlingOptions = {
 		usages: number;
 		duration: number;
 	}

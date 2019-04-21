@@ -1,4 +1,4 @@
-const discord = require('discord.js');
+const discord = require('awesome-djs');
 
 /** A group for commands. Whodathunkit? */
 class CommandGroup {

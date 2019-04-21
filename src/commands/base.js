@@ -1,5 +1,5 @@
 const path = require('path');
-const { escapeMarkdown } = require('discord.js');
+const { escapeMarkdown } = require('awesome-djs');
 const { oneLine, stripIndents } = require('common-tags');
 const ArgumentCollector = require('./collector');
 const { permissions } = require('../util');
@@ -29,6 +29,7 @@ class Command {
 	 * @property {PermissionResolvable[]} [clientPermissions] - Permissions required by the client to use the command.
 	 * @property {PermissionResolvable[]} [userPermissions] - Permissions required by the user to use the command.
 	 * @property {boolean} [nsfw=false] - Whether the command is usable only in NSFW channels.
+	 * @property {boolean} [explicit=false] - Whether the command is explicit.
 	 * @property {ThrottlingOptions} [throttling] - Options for throttling usages of the command.
 	 * @property {boolean} [defaultHandling=true] - Whether or not the default command handling should be used.
 	 * If false, then only patterns will trigger the command.
@@ -156,6 +157,12 @@ class Command {
 		 * @type {boolean}
 		 */
 		this.nsfw = Boolean(info.nsfw);
+
+		/**
+		 * Whether the command is explicit
+		 * @type {boolean}
+		 */
+		this.explicit = Boolean(info.explicit);
 
 		/**
 		 * Whether the default command handling is enabled for the command
@@ -448,7 +455,8 @@ class Command {
 		} catch(err) {
 			if(cached) require.cache[cmdPath] = cached;
 			try {
-				cmdPath = path.join(__dirname, this.groupID, `${this.memberName}.js`);
+				// eslint-disable-next-line max-len
+				cmdPath = path.join(__dirname, this.groupID, `${this.memberName}.${this.client.options.typescript ? 'ts' : 'js'}`);
 				cached = require.cache[cmdPath];
 				delete require.cache[cmdPath];
 				newCmd = require(cmdPath);

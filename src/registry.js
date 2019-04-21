@@ -1,5 +1,6 @@
 const path = require('path');
-const discord = require('discord.js');
+const moment = require('moment');
+const discord = require('awesome-djs');
 const Command = require('./commands/base');
 const CommandGroup = require('./commands/group');
 const CommandoMessage = require('./extensions/message');
@@ -68,7 +69,8 @@ class CommandoRegistry {
 		const existing = this.groups.get(group.id);
 		if(existing) {
 			existing.name = group.name;
-			this.client.emit('debug', `Group ${group.id} is already registered; renamed it to "${group.name}".`);
+			// eslint-disable-next-line max-len
+			this.client.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Group ${group.id} is already registered; renamed it to "${group.name}".`);
 		} else {
 			this.groups.set(group.id, group);
 			/**
@@ -78,7 +80,7 @@ class CommandoRegistry {
 			 * @param {CommandoRegistry} registry - Registry that the group was registered to
 			 */
 			this.client.emit('groupRegister', group, this);
-			this.client.emit('debug', `Registered group ${group.id}.`);
+			this.client.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Registered group ${group.id}.`);
 		}
 
 		return this;
@@ -153,7 +155,8 @@ class CommandoRegistry {
 		 * @param {CommandoRegistry} registry - Registry that the command was registered to
 		 */
 		this.client.emit('commandRegister', command, this);
-		this.client.emit('debug', `Registered command ${group.id}:${command.memberName}.`);
+		// eslint-disable-next-line max-len
+		this.client.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Registered command ${group.id}:${command.memberName}.`);
 
 		return this;
 	}
@@ -227,7 +230,7 @@ class CommandoRegistry {
 		 * @param {CommandoRegistry} registry - Registry that the type was registered to
 		 */
 		this.client.emit('typeRegister', type, this);
-		this.client.emit('debug', `Registered argument type ${type.id}.`);
+		this.client.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Registered argument type ${type.id}.`);
 
 		return this;
 	}
@@ -406,7 +409,8 @@ class CommandoRegistry {
 		 * @param {Command} oldCommand - Old command
 		 */
 		this.client.emit('commandReregister', command, oldCommand);
-		this.client.emit('debug', `Reregistered command ${command.groupID}:${command.memberName}.`);
+		// eslint-disable-next-line max-len
+		this.client.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Reregistered command ${command.groupID}:${command.memberName}.`);
 	}
 
 	/**
@@ -424,7 +428,8 @@ class CommandoRegistry {
 		 * @param {Command} command - Command that was unregistered
 		 */
 		this.client.emit('commandUnregister', command);
-		this.client.emit('debug', `Unregistered command ${command.groupID}:${command.memberName}.`);
+		// eslint-disable-next-line max-len
+		this.client.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Unregistered command ${command.groupID}:${command.memberName}.`);
 	}
 
 	/**
@@ -532,7 +537,7 @@ class CommandoRegistry {
 	 * @return {string} Fully-resolved path to the corresponding command file
 	 */
 	resolveCommandPath(group, memberName) {
-		return path.join(this.commandsPath, group, `${memberName}.js`);
+		return path.join(this.commandsPath, group, `${memberName}.${this.client.options.typescript ? 'ts' : 'js'}`);
 	}
 }
 

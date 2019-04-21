@@ -315,7 +315,7 @@ class Command {
 			case 'nsfw':
 				return message.reply(`The \`${this.name}\` command can only be used in NSFW channels.`);
 			case 'permission': {
-				if(data.response) return message.reply(data.response);
+				if(data && data.response) return message.reply(data.response);
 				return message.reply(`You do not have permission to use the \`${this.name}\` command.`);
 			}
 			case 'clientPermissions': {

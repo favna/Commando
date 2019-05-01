@@ -18,6 +18,7 @@ class CommandoClient extends discord.Client {
 	 * @property {string|string[]|Set<string>} [owner] - ID of the bot owner's Discord user, or multiple IDs
 	 * @property {string} [invite] - Invite URL to the bot's support server
 	 * @property {boolean} [typescript=false] - Whether the bot is running on a typescript codebase
+	 * @property {Snowflake} [userid] - The ID of the bot, once you know it a quick shortcut to store it in
 	 */
 
 	/**
@@ -29,6 +30,7 @@ class CommandoClient extends discord.Client {
 		if(typeof options.commandEditableDuration === 'undefined') options.commandEditableDuration = 30;
 		if(typeof options.nonCommandEditable === 'undefined') options.nonCommandEditable = true;
 		if(typeof options.typescript === 'undefined') options.typescript = false;
+		if(typeof options.userid === 'undefined') options.userid = undefined;
 		super(options);
 
 		/**
@@ -54,6 +56,13 @@ class CommandoClient extends discord.Client {
 		 * @type {GuildSettingsHelper}
 		 */
 		this.settings = new GuildSettingsHelper(this, null);
+
+		/**
+		 * The client's User ID
+		 * If an array of IDs is given then all are checked
+		 * @type {Snowflake | Snowflake[]}
+		 */
+		this.userid = options.userid;
 
 		/**
 		 * Internal global command prefix, controlled by the {@link CommandoClient#commandPrefix} getter/setter

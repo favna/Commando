@@ -6,7 +6,7 @@
 [![Build status](https://travis-ci.org/discordjs/Commando.svg)](https://travis-ci.org/discordjs/Commando)
 
 ## Fork Info
-This is a fork of the official Discord.JS Commando as described below. It is optimized for my own discord bot [ribbon](https://favna.xyz/ribbon) in various ways.
+This is a fork of the official Discord.JS Commando as described below. It is optimized for my own discord bot [ribbon](https://favware.tech/ribbon) in various ways.
 
 ## About
 Commando is the official command framework for [discord.js](https://github.com/discordjs/discord.js).

@@ -204,7 +204,7 @@ declare module 'awesome-commando' {
 		public provider: SettingProvider;
 		public registry: CommandoRegistry;
 		public settings: GuildSettingsHelper;
-		public userid: Snowflake | Snowflake[];
+		public botIds: Snowflake | Snowflake[];
 
 		public isOwner(user: UserResolvable): boolean;
 		public setProvider(provider: SettingProvider | Promise<SettingProvider>): Promise<void>;
@@ -429,7 +429,7 @@ declare module 'awesome-commando' {
 		owner?: string | string[] | Set<string>;
 		invite?: string;
 		typescript?: boolean;
-		userid?: Snowflake | Snowflake[];
+		botIds?: Snowflake | Snowflake[];
 	}
 
 	export type CommandResolvable = Command | string;

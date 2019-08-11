@@ -1,6 +1,6 @@
 {
 	"name": "awesome-commando",
-	"version": "3.0.10",
+	"version": "3.0.11",
 	"description": "Fork of Discord.JS-Commando made to be awesome",
 	"license": "Apache-2.0",
 	"author": "Jeroen \"Favna\" Claassens <support@favware.tech> (https://favware.tech/)",
@@ -36,11 +36,11 @@
 		"@types/node": "^11.13.4",
 		"discord.js-docgen": "discordjs/docgen",
 		"eslint": "^5.14.1",
-		"typescript": "^3.4.3"
+		"typescript": "^3.5.3"
 	},
 	"peerDependencies": {
 		"@types/better-sqlite3": "^5.2.3",
-		"awesome-djs": "^13.0.12",
+		"awesome-djs": "^13.0.20",
 		"better-sqlite3": "^5.4.0",
 		"sqlite": "^3.0.0"
 	},

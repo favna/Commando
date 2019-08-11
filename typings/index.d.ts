@@ -1,17 +1,17 @@
-declare module 'sqlite' {
+declare module 'SqliteModule' {
 	export interface Database {}
 	export interface Statement {}
 }
 
-declare module 'SyncSqlite' {
+declare module 'SyncSqliteModule' {
 	export interface Database {}
 	export interface Statement {}
 }
 
 declare module 'awesome-commando' {
 	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageAdditions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, VoiceState, Webhook, ClientUser } from 'awesome-djs';
-	import { Database as SQLiteDatabase, Statement as SQLiteStatement } from 'sqlite';
-	import { Database as SyncSQLiteDatabase, Statement as SyncSQLiteStatement } from 'SyncSqlite';
+	import { Database as SQLiteDatabase, Statement as SQLiteStatement } from 'SqliteModule';
+	import { Database as SyncSQLiteDatabase, Statement as SyncSQLiteStatement } from 'SyncSqliteModule';
 
 	export class Argument {
 		private constructor(client: CommandoClient, info: ArgumentInfo);
@@ -344,7 +344,7 @@ declare module 'awesome-commando' {
 
 		public db: SyncSQLiteDatabase;
 		protected deleteStmt: SyncSQLiteStatement;
-		protected insertOrReplaceStmt: SyncSQLiteStatement
+		protected insertOrReplaceStmt: SyncSQLiteStatement;
 	}
 
 	export class util {

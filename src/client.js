@@ -19,7 +19,8 @@ class CommandoClient extends discord.Client {
 	 * @property {string} [invite] - Invite URL to the bot's support server
 	 * @property {boolean} [typescript=false] - Whether the bot is running on a typescript codebase
 	 * @property {Snowflake} [botIds] - The ID of the bot(s). A shortcut to access it for message author checking
-	 * @property {PlayerManager} [lavalink] - An optional discord.js-lavalink PlayerManager (see {@link https://github.com/MrJacz/discord.js-lavalink|discord.js-lavalink})
+	 * @property {PlayerManager} [lavalink] - An optional discord.js-lavalink PlayerManager
+	 *   (see {@link https://github.com/MrJacz/discord.js-lavalink|discord.js-lavalink})
 	 */
 
 	/**

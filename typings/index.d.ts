@@ -12,6 +12,7 @@ declare module 'awesome-commando' {
 	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageAdditions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, VoiceState, Webhook, ClientUser } from 'awesome-djs';
 	import { Database as SQLiteDatabase, Statement as SQLiteStatement } from 'SqliteModule';
 	import { Database as SyncSQLiteDatabase, Statement as SyncSQLiteStatement } from 'SyncSqliteModule';
+	import { PlayerManager } from 'discord.js-lavalink'
 
 	export class Argument {
 		private constructor(client: CommandoClient, info: ArgumentInfo);
@@ -205,6 +206,7 @@ declare module 'awesome-commando' {
 		public registry: CommandoRegistry;
 		public settings: GuildSettingsHelper;
 		public botIds: Snowflake | Snowflake[];
+		public lavalink: PlayerManager;
 
 		public isOwner(user: UserResolvable): boolean;
 		public setProvider(provider: SettingProvider | Promise<SettingProvider>): Promise<void>;
@@ -430,6 +432,7 @@ declare module 'awesome-commando' {
 		invite?: string;
 		typescript?: boolean;
 		botIds?: Snowflake | Snowflake[];
+		lavalink?: PlayerManager;
 	}
 
 	export type CommandResolvable = Command | string;

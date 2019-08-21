@@ -19,6 +19,7 @@ class CommandoClient extends discord.Client {
 	 * @property {string} [invite] - Invite URL to the bot's support server
 	 * @property {boolean} [typescript=false] - Whether the bot is running on a typescript codebase
 	 * @property {Snowflake} [botIds] - The ID of the bot(s). A shortcut to access it for message author checking
+	 * @property {PlayerManager} [lavalink] - An optional discord.js-lavalink PlayerManager (see {@link https://github.com/MrJacz/discord.js-lavalink|discord.js-lavalink})
 	 */
 
 	/**
@@ -31,6 +32,7 @@ class CommandoClient extends discord.Client {
 		if(typeof options.nonCommandEditable === 'undefined') options.nonCommandEditable = true;
 		if(typeof options.typescript === 'undefined') options.typescript = false;
 		if(typeof options.botIds === 'undefined') options.botIds = undefined;
+		if(typeof options.lavalink === 'undefined') options.lavalink = undefined;
 		super(options);
 
 		/**
@@ -64,6 +66,13 @@ class CommandoClient extends discord.Client {
 		 * @type {Snowflake | Snowflake[]}
 		 */
 		this.botIds = options.botIds;
+
+		/**
+		 * The Lavalink PlayerManager of the bot.
+		 * @type {PlayerManager}
+		 * @see {@link https://github.com/MrJacz/discord.js-lavalink|discord.js-lavalink}
+		 */
+		this.lavalink = options.lavalink;
 
 		/**
 		 * Internal global command prefix, controlled by the {@link CommandoClient#commandPrefix} getter/setter

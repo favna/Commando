@@ -172,7 +172,6 @@ declare module 'discord.js-commando' {
 		public clearReactions(): Promise<Message>;
 		public code(lang: string, content: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>
 		public direct(content: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
-		public edit(content: StringResolvable): Promise<Message>
 		public editCode(lang: string, content: StringResolvable): Promise<Message>;
 		public embed(embed: MessageEmbed | {}, content?: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
 		public fetchWebhook(): Promise<Webhook>;
@@ -180,12 +179,9 @@ declare module 'discord.js-commando' {
 		public isMentioned(data: GuildChannel | User | Role | string): boolean;
 		public parseArgs(): string | string[];
 		public static parseArgs(argString: string, argCount?: number, allowSingleQuote?: boolean): string[];
-		public pin(): Promise<Message>
-		public react(emoji: string | Emoji | ReactionEmoji): Promise<MessageReaction>;
 		public replyEmbed(embed: MessageEmbed | {}, content?: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
 		public run(): Promise<Message | Message[]>;
 		public say(content: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
-		public unpin(): Promise<Message>;
 		public usage(argString?: string, prefix?: string, user?: User): string;
 	}
 

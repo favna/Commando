@@ -1,4 +1,4 @@
-const { Structures, escapeMarkdown, splitMessage, resolveString } = require('awesome-djs');
+const { Structures, escapeMarkdown, splitMessage, resolveString } = require('discord.js');
 const { oneLine } = require('common-tags');
 const Command = require('../commands/base');
 const FriendlyError = require('../errors/friendly');

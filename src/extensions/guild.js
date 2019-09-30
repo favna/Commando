@@ -1,4 +1,4 @@
-const { Structures } = require('awesome-djs');
+const { Structures } = require('discord.js');
 const Command = require('../commands/base');
 const GuildSettingsHelper = require('../providers/helper');
 

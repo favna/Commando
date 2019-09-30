@@ -1,6 +1,6 @@
 const path = require('path');
 const moment = require('moment');
-const discord = require('awesome-djs');
+const discord = require('discord.js');
 const Command = require('./commands/base');
 const CommandGroup = require('./commands/group');
 const CommandoMessage = require('./extensions/message');

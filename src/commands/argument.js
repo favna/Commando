@@ -1,4 +1,4 @@
-const { escapeMarkdown } = require('awesome-djs');
+const { escapeMarkdown } = require('discord.js');
 const { oneLine, stripIndents } = require('common-tags');
 const ArgumentUnionType = require('../types/union');
 

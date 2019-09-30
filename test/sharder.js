@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const path = require('path');
-const { ShardingManager } = require('awesome-djs');
+const { ShardingManager } = require('discord.js');
 const { token } = require('./auth');
 
 /* eslint-disable no-console */

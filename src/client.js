@@ -1,5 +1,5 @@
 const moment = require('moment');
-const discord = require('awesome-djs');
+const discord = require('discord.js');
 const CommandoRegistry = require('./registry');
 const CommandDispatcher = require('./dispatcher');
 const GuildSettingsHelper = require('./providers/helper');

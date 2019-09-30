@@ -1,5 +1,5 @@
 const util = require('util');
-const discord = require('awesome-djs');
+const discord = require('discord.js');
 const tags = require('common-tags');
 const { escapeRegex } = require('../../util');
 const Command = require('../base');

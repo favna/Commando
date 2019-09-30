@@ -1,5 +1,5 @@
 const path = require('path');
-const { escapeMarkdown } = require('awesome-djs');
+const { escapeMarkdown } = require('discord.js');
 const { oneLine, stripIndents } = require('common-tags');
 const ArgumentCollector = require('./collector');
 const { permissions } = require('../util');

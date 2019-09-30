@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const { Guild } = require('awesome-djs');
+const { Guild } = require('discord.js');
 
 /**
  * Loads and stores settings associated with guilds

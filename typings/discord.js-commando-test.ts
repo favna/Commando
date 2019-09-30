@@ -1,7 +1,7 @@
 /// <reference path='index.d.ts' />
 
-import { Message } from 'awesome-djs';
-import { Command, CommandoMessage, CommandoClient } from 'awesome-commando';
+import { Message } from 'discord.js';
+import { Command, CommandoMessage, CommandoClient } from 'discord.js-commando';
 
 const client = new CommandoClient();
 

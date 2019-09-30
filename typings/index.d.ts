@@ -1,18 +1,5 @@
-declare module 'SqliteModule' {
-	export interface Database {}
-	export interface Statement {}
-}
-
-declare module 'SyncSqliteModule' {
-	export interface Database {}
-	export interface Statement {}
-}
-
-declare module 'awesome-commando' {
-	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageAdditions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, VoiceState, Webhook, ClientUser } from 'awesome-djs';
-	import { Database as SQLiteDatabase, Statement as SQLiteStatement } from 'SqliteModule';
-	import { Database as SyncSQLiteDatabase, Statement as SyncSQLiteStatement } from 'SyncSqliteModule';
-	import { PlayerManager } from 'discord.js-lavalink'
+declare module 'discord.js-commando' {
+	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageAdditions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, VoiceState, Webhook, ClientUser } from 'discord.js';
 
 	export class Argument {
 		private constructor(client: CommandoClient, info: ArgumentInfo);
@@ -105,8 +92,8 @@ declare module 'awesome-commando' {
 		public isEnabledIn(guild: GuildResolvable, bypassGroup?: boolean): boolean;
 		public isUsable(message: Message): boolean;
 		public onBlock(message: CommandoMessage, reason: string, data?: Object): Promise<Message | Message[]>;
-		public onBlock(message: CommandoMessage, reason: 'guildOnly' | 'nsfw' | 'explicit'): Promise<Message | Message[]>;
-		public onBlock(message: CommandoMessage, reason: 'permission', data?: { response?: string }): Promise<Message | Message[]>;
+		public onBlock(message: CommandoMessage, reason: 'guildOnly' | 'nsfw'): Promise<Message | Message[]>;
+		public onBlock(message: CommandoMessage, reason: 'permission', data: { response?: string }): Promise<Message | Message[]>;
 		public onBlock(message: CommandoMessage, reason: 'clientPermissions', data: { missing: PermissionString[] }): Promise<Message | Message[]>;
 		public onBlock(message: CommandoMessage, reason: 'throttling', data: { throttle: Object, remaining: number }): Promise<Message | Message[]>;
 		public onError(err: Error, message: CommandoMessage, args: object | string | string[], fromPattern: false, result?: ArgumentCollectorResult): Promise<Message | Message[]>;
@@ -177,20 +164,29 @@ declare module 'awesome-commando' {
 		public patternMatches: string[];
 		public responsePositions: {};
 		public responses: {};
+		public readonly system: boolean;
+		public readonly tts: boolean;
+		public readonly webhookID: string;
 
-		public anyUsage(command?: string, prefix?: string, user?: User | ClientUser): string;
+		public anyUsage(command?: string, prefix?: string, user?: User): string;
+		public clearReactions(): Promise<Message>;
 		public code(lang: string, content: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>
 		public direct(content: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
+		public edit(content: StringResolvable): Promise<Message>
 		public editCode(lang: string, content: StringResolvable): Promise<Message>;
 		public embed(embed: MessageEmbed | {}, content?: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
+		public fetchWebhook(): Promise<Webhook>;
 		public isMemberMentioned(member: GuildMember | User): boolean;
 		public isMentioned(data: GuildChannel | User | Role | string): boolean;
 		public parseArgs(): string | string[];
 		public static parseArgs(argString: string, argCount?: number, allowSingleQuote?: boolean): string[];
+		public pin(): Promise<Message>
+		public react(emoji: string | Emoji | ReactionEmoji): Promise<MessageReaction>;
 		public replyEmbed(embed: MessageEmbed | {}, content?: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
 		public run(): Promise<Message | Message[]>;
 		public say(content: StringResolvable, options?: MessageOptions | MessageAdditions): Promise<Message | Message[]>;
-		public usage(argString?: string, prefix?: string, user?: User | ClientUser): string;
+		public unpin(): Promise<Message>;
+		public usage(argString?: string, prefix?: string, user?: User): string;
 	}
 
 	export class CommandoClient extends Client {
@@ -206,7 +202,6 @@ declare module 'awesome-commando' {
 		public registry: CommandoRegistry;
 		public settings: GuildSettingsHelper;
 		public botIds: Snowflake | Snowflake[];
-		public lavalink: PlayerManager;
 
 		public isOwner(user: UserResolvable): boolean;
 		public setProvider(provider: SettingProvider | Promise<SettingProvider>): Promise<void>;
@@ -320,14 +315,14 @@ declare module 'awesome-commando' {
 	}
 
 	export class SQLiteProvider extends SettingProvider {
-		public constructor(db: SQLiteDatabase);
+		public constructor(db: any | Promise<any>);
 
 		public readonly client: CommandoClient;
-		public db: SQLiteDatabase;
-		protected deleteStmt: SQLiteStatement;
-		protected insertOrReplaceStmt: SQLiteStatement;
-		protected listeners: Map<any, any>;
-		protected settings: Map<any, any>;
+		public db: any;
+		private deleteStmt: any;
+		private insertOrReplaceStmt: any;
+		private listeners: Map<any, any>;
+		private settings: Map<any, any>;
 
 		public clear(guild: Guild | string): Promise<void>;
 		public destroy(): Promise<void>;
@@ -341,12 +336,26 @@ declare module 'awesome-commando' {
 		private updateOtherShards(key: string, val: any): void;
 	}
 
-	export class SyncSQLiteProvider extends SQLiteProvider {
-		public constructor(db: SyncSQLiteDatabase);
+	export class SyncSQLiteProvider extends SettingProvider {
+		public constructor(db: any | Promise<any>);
 
-		public db: SyncSQLiteDatabase;
-		protected deleteStmt: SyncSQLiteStatement;
-		protected insertOrReplaceStmt: SyncSQLiteStatement;
+		public readonly client: CommandoClient;
+		public db: any;
+		private deleteStmt: any;
+		private insertOrReplaceStmt: any;
+		private listeners: Map<any, any>;
+		private settings: Map<any, any>;
+
+		public clear(guild: Guild | string): Promise<void>;
+		public destroy(): Promise<void>;
+		public get(guild: Guild | string, key: string, defVal?: any): any;
+		public init(client: CommandoClient): Promise<void>;
+		public remove(guild: Guild | string, key: string): Promise<any>;
+		public set(guild: Guild | string, key: string, val: any): Promise<any>;
+		private setupGuild(guild: string, settings: {}): void;
+		private setupGuildCommand(guild: CommandoGuild, command: Command, settings: {}): void;
+		private setupGuildGroup(guild: CommandoGuild, group: CommandGroup, settings: {}): void;
+		private updateOtherShards(key: string, val: any): void;
 	}
 
 	export class util {
@@ -367,9 +376,9 @@ declare module 'awesome-commando' {
 		cancelled?: 'user' | 'time' | 'promptLimit';
 		prompts: Message[];
 		answers: Message[];
-	};
+	}
 
-	export type ArgumentInfo = {
+	export interface ArgumentInfo {
 		key: string;
 		label?: string;
 		prompt: string;
@@ -384,18 +393,18 @@ declare module 'awesome-commando' {
 		parse?: Function;
 		isEmpty?: Function;
 		wait?: number;
-	};
+	}
 
 	export type ArgumentResult<T extends {} = any> = {
 		value: T | T[];
 		cancelled?: 'user' | 'time' | 'promptLimit';
 		prompts: Message[];
 		answers: Message[];
-	};
+	}
 
 	export type CommandGroupResolvable = CommandGroup | string;
 
-	export type CommandInfo = {
+	export interface CommandInfo {
 		name: string;
 		aliases?: string[];
 		autoAliases?: boolean;
@@ -422,7 +431,7 @@ declare module 'awesome-commando' {
 		guarded?: boolean;
 		hidden?: boolean;
 		unknown?: boolean;
-	};
+	}
 
 	export interface CommandoClientOptions extends ClientOptions {
 		commandPrefix?: string;
@@ -432,18 +441,17 @@ declare module 'awesome-commando' {
 		invite?: string;
 		typescript?: boolean;
 		botIds?: Snowflake | Snowflake[];
-		lavalink?: PlayerManager;
 	}
 
 	export type CommandResolvable = Command | string;
 
-	export type Inhibitor = (msg: CommandoMessage) => false | string | Inhibition;
-	export type Inhibition = {
+	type Inhibitor = (msg: CommandoMessage) => false | string | Inhibition;
+	export interface Inhibition {
 		reason: string;
 		response?: Promise<Message>;
 	}
 
-	export type ThrottlingOptions = {
+	export interface ThrottlingOptions {
 		usages: number;
 		duration: number;
 	}

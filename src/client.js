@@ -161,23 +161,21 @@ class CommandoClient extends discord.Client {
 	 * @return {Promise<void>}
 	 */
 	async setProvider(provider) {
-		provider = await provider;
-		this.provider = provider;
+		const newProvider = await provider;
+		this.provider = newProvider;
 
 		if(this.readyTimestamp) {
-			// eslint-disable-next-line max-len
-			this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider set to ${provider.constructor.name} - initialising...`);
-			await provider.init(this);
-			this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider finished initialisation.`);
+			this.emit('debug', `Provider set to ${newProvider.constructor.name} - initialising...`);
+			await newProvider.init(this);
+			this.emit('debug', 'Provider finished initialisation.');
 			return undefined;
 		}
 
-		// eslint-disable-next-line max-len
-		this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Provider set to ${provider.constructor.name} - will initialise once ready.`);
+		this.emit('debug', `Provider set to ${newProvider.constructor.name} - will initialise once ready.`);
 		await new Promise(resolve => {
 			this.once('ready', () => {
-				this.emit('debug', `[${moment().format('YYYY-MM-DD HH:mm:ssZ')}] Initialising provider...`);
-				resolve(provider.init(this));
+				this.emit('debug', `Initialising provider...`);
+				resolve(newProvider.init(this));
 			});
 		});
 
